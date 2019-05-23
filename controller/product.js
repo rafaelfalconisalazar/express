@@ -23,7 +23,7 @@ function getProducts(req, res) {
 
 function getProductsByProvider(req,res){
     let providerId = req.params.providerId
-    Product.find({ tags: { $all : [providerId] } },(err,products)=>{
+    Product.find({ "provider.name": providerId},(err,products)=>{
         if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
         if (!products) return res.status(404).send({ message: "No existen productos con ese provedor" })
         res.status(200).send({ products })  
