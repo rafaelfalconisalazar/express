@@ -11,6 +11,8 @@ api.post('/v1/product', productController.createProduct)
 
 api.get('/v1/product', productController.getProducts)
 
+api.get('/v1/product/provider/:providerId', productController.getProductsByProvider)
+
 api.get('/v1/product/:productId', productController.getProduct);
 
 api.delete('/v1/product/:productId', productController.deleteProduct);

@@ -21,6 +21,16 @@ function getProducts(req, res) {
     })
 }
 
+function getProductsByProvider(req,res){
+    let providerId = req.params.providerId
+    Product.find({ tags: { $all : [providerId] } },(err,products)=>{
+        if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+        if (!products) return res.status(404).send({ message: "No existen productos con ese provedor" })
+        res.status(200).send({ products })  
+    })
+   
+}
+
 function updateProduct(req, res) {
     let productId = req.params.productId
     let update = req.body
@@ -47,30 +57,35 @@ function deleteProduct(req, res) {
 function createProduct(req, res) {
 
     let product = new Product()
-    let provider = new Provider()
-    provider.name = "amazon"
-    provider.address = "test"
+    let providersBody =req.body.provider
     product.name = req.body.name
     product.picture = req.body.picture
     product.price = req.body.pricey
     product.category = req.body.category
     product.description = req.body.description
     let providers = []
-    providers.unshift(provider)
-    providers.unshift(provider)
-    product.provider = providers
-
-    provider.save((err, providerStores) => { })
+    providersBody.forEach(function(providerBody) {
+        let provider = new Provider()
+        provider.name=providerBody.name;
+        provider.address=providerBody.address;
+        providers.push(provider)
+        provider.save((err, providerStores) => { })
+      });
+      
+    
+    product.provider = providers   
 
     product.save((err, producStored) => {
         if (err) res.status(500).send({ message: `error al crear el producto ${err}` })
         res.status(200).send({ message: `${producStored}` });
     })
+    
 }
 
 module.exports = {
     getProduct,
     getProducts,
+    getProductsByProvider,
     updateProduct,
     deleteProduct,
     createProduct
